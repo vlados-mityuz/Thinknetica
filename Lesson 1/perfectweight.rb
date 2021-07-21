@@ -2,7 +2,7 @@ puts "Как вас зовут?"
 name = gets.chomp
 
 puts "Укажите ваш рост"
-height = gets.chomp.to_i
+height = gets.to_i
 
 result = (height - 110) * 1.15
 
