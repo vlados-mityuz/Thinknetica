@@ -16,16 +16,12 @@ end
 
 datenum = 0
 
+days_count = months.values.take(month-1)
+
 if month == 1
   datenum = date
 else 
-  months.each do |mon, length|
-  datenum += length
-  if mon == month - 1
-    datenum += date
-    break
-  end
-  end
+  datenum = days_count.sum + date
 end
 
 puts datenum 

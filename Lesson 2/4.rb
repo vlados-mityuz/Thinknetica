@@ -1,8 +1,10 @@
 letters = [ 'a', 'e', 'i', 'o', 'u', 'y' ]
-x, hash, counter = 0, {}, 1
+x = 0
+hash = {}
+counter = 1
 
-('a'..'z').each do |i|
-  if i == letters[x]
+('a'..'z').each do |letter|
+  if letter == letters[x]
     hash[letters[x]] = counter
     x += 1
   end

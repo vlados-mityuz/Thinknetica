@@ -1,8 +1,7 @@
 fib = [ 0, 1 ]
-i, x = 1, 1
-until x > 100
-  fib << x
-  i += 1
-  x = fib[i] + fib[i-1]
+number = 1
+until number > 100
+  fib << number
+  number = fib[-1] + fib[-2]
 end
 puts fib 
