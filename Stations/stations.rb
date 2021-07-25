@@ -36,18 +36,13 @@ class Route
 end
 
 class Train
-  attr_reader :number, :type, :carriage, :current_speed, :current_station
+  attr_reader :number, :type, :carriage, :current_speed, :current_station, :route
 
-  def initialize(number, type, carriage)
+  def initialize (number, type, carriage)
     @number = number
     @type = type
     @carriage = carriage
     @current_speed = 0
-    @train_route = []
-    @current_route = []
-    @current_station = ""
-    @previous_station = @current_route[@train_route.length -1]
-    @next_station = @current_route[@train_route.length + 1]
   end
 
   def increase_speed(value)
@@ -59,36 +54,38 @@ class Train
   end
 
   def add_carriage
-    if @current_speed == 0
+    if current_speed == 0
       @carriage += 1
     else
-      puts "Вагон движется!"
+      puts "Поезд движется!"
     end
   end
 
   def put_away_carriage
-    if @current_speed == 0
+    if current_speed == 0
       @carriage -= 1
     else
-      puts "Вагон движется!"
+      puts "Поезд движется!"
     end
   end
 
   def start_moving(route)
-    @train_route << route(0)
-  end
-
-  def get_route(route)
-    @current_route = route
+    @current_station = route(0)
   end
 
   def move_forward
-    @train_route << @current_route[@train_route.length + 1]
+    @current_station = route[route.index(@current_station) + 1]
   end
 
   def move_backward
-    if @train_route.length > 0
-      @train_route.pop
-    end
+    @current_station = route[route.index(@current_station) - 1]
+  end
+
+  def previous_station
+    return move_backward
+  end
+
+  def next_station
+    return move_forward
   end
 end
