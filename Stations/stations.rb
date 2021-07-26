@@ -15,23 +15,23 @@ class Station
   end
 
   def train_type(type)
-    @trains.select{ |train|.type == type }
+    @trains.select{ |train| type == type }
   end
 end
 
 class Route
-  attr_reader :route
+  attr_reader :stations
 
   def initialize(starting_point, finishing_point)
-    @route = [starting_point, finishing_point]
+    @stations = [starting_point, finishing_point]
   end
 
   def add_stop_point(point)
-    @route.insert(-2, point)
+    @stations.insert(-2, point)
   end
 
   def delete_stop_point(point)
-    @route.delete(point)
+    @stations.delete(point)
   end
 end
 
@@ -56,7 +56,7 @@ class Train
   def add_carriage
     if current_speed == 0
       @carriage += 1
-    else
+    elsif
       puts "Поезд движется!"
     end
   end
@@ -64,28 +64,28 @@ class Train
   def put_away_carriage
     if current_speed == 0
       @carriage -= 1
-    else
+    elsif
       puts "Поезд движется!"
     end
   end
 
   def start_moving(route)
-    @current_station = route(0)
+    @current_station = route.stations.first
   end
 
-  def move_forward
-    @current_station = route[route.index(@current_station) + 1]
+  def move_forward(route)
+    @current_station = route.stations[route.stations.index(@current_station) + 1]
   end
 
-  def move_backward
-    @current_station = route[route.index(@current_station) - 1]
+  def move_backward(route)
+    @current_station = route.stations[route.stations.index(@current_station) - 1]
   end
 
-  def previous_station
-    return move_backward
+  def previous_station(route)
+    route.stations[route.stations.index(@current_station) - 1]
   end
 
-  def next_station
-    return move_forward
+  def next_station(route)
+    route.stations[route.stations.index(@current_station) + 1]
   end
 end
