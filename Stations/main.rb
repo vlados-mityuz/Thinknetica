@@ -114,44 +114,48 @@ class Controller
     chosen_station = choose_station(@stations_list).trains
     puts chosen_station
   end
+
+  def menu
+    loop do
+      puts 'Введите 1, чтобы создать станцию
+      Введите 2, чтобы создать поезд
+      Введите 3, чтобы создать маршрут
+      Введите 4, чтобы управлять маршрутом
+      Введите 5, чтобы назначить маршрут
+      Введите 6, чтобы прицепить вагон к поезду
+      Введите 7, чтобы отцепить вагон
+      Введите 8, чтобы переместить поезд по маршруту
+      Введите 9, чтобы просмотреть список станций и вывести список поездов
+      Введите 0, чтобы выйти'
+      choice = gets.to_i
+      case choice
+      when 0
+        break
+      when 1
+        self.new_station
+      when 2
+        self.new_train
+      when 3
+        self.new_route
+      when 4
+        self.control_route
+      when 5
+        self.set_route
+      when 6
+        self.add_carriage_to_train
+      when 7
+        self.set_off_carriage
+      when 8
+        self.move_train
+      when 9
+        self.stations_trains_list
+      else
+        puts "Такой команды нет"
+      end
+    end
+  end
+
 end
 
 controller = Controller.new
-
-loop do
-  puts 'Введите 1, чтобы создать станцию
-  Введите 2, чтобы создать поезд
-  Введите 3, чтобы создать маршрут
-  Введите 4, чтобы управлять маршрутом
-  Введите 5, чтобы назначить маршрут
-  Введите 6, чтобы прицепить вагон к поезду
-  Введите 7, чтобы отцепить вагон
-  Введите 8, чтобы переместить поезд по маршруту
-  Введите 9, чтобы просмотреть список станций и вывести список поездов
-  Введите 0, чтобы выйти'
-  choice = gets.to_i
-  case choice
-  when 0
-    break
-  when 1
-    controller.new_station
-  when 2
-    controller.new_train
-  when 3
-    controller.new_route
-  when 4
-    controller.control_route
-  when 5
-    controller.set_route
-  when 6
-    controller.add_carriage_to_train
-  when 7
-    controller.set_off_carriage
-  when 8
-    controller.move_train
-  when 9
-    controller.stations_trains_list
-  else
-    puts "Такой команды нет"
-  end
-end
+controller.menu
