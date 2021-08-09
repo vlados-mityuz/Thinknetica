@@ -1,11 +1,21 @@
-class Train
-  attr_reader :number, :type, :current_speed, :current_station, :route, :cargo
+require_relative 'manufacturer.rb'
+require_relative 'instance_counter.rb'
 
+class Train
+  include Manufacturer
+  include InstanceCounter
+  attr_reader :number, :type, :current_speed, :current_station, :route, :cargo
+  $trains_list = []
   def initialize (number)
     @number = number
     @current_speed = 0
     @carriages = []
     @type = type
+    create_instance
+  end
+
+  def self.find(searched_number)
+    $trains_list.find { |train| train.number == searched_number }
   end
 
   def increase_speed(value)

@@ -2,11 +2,11 @@ require_relative 'train.rb'
 require_relative 'route.rb'
 require_relative 'station.rb'
 require_relative 'carriage.rb'
+require_relative 'instance_counter.rb'
 
 class Controller
   def initialize
     @stations_list = []
-    @trains_list = []
     @routes = []
   end    
 
@@ -37,6 +37,59 @@ class Controller
     return chosen_station
   end
 
+  def stations_trains_list
+    puts 'Выберите станцию'
+    chosen_station = choose_station(@stations_list).trains
+    puts chosen_station
+  end
+
+  def menu
+    loop do
+      puts 'Введите 1, чтобы создать станцию
+      Введите 2, чтобы создать поезд
+      Введите 3, чтобы создать маршрут
+      Введите 4, чтобы управлять маршрутом
+      Введите 5, чтобы назначить маршрут
+      Введите 6, чтобы прицепить вагон к поезду
+      Введите 7, чтобы отцепить вагон
+      Введите 8, чтобы переместить поезд по маршруту
+      Введите 9, чтобы просмотреть список станций и вывести список поездов
+      Введите 10, чтобы вернуть количество инстансов
+      Введите 0, чтобы выйти'
+      choice = gets.to_i
+      case choice
+      when 0
+        break
+      when 1
+        self.new_station
+      when 2
+        self.new_train
+      when 3
+        self.new_route
+      when 4
+        self.control_route
+      when 5
+        self.set_route
+      when 6
+        self.add_carriage_to_train
+      when 7
+        self.set_off_carriage
+      when 8
+        self.move_train
+      when 9
+        self.stations_trains_list
+      when 10
+        self.return_instances
+      else
+        puts "Такой команды нет"
+      end
+    end
+  end
+
+  protected
+
+  #ограничение доступа к записи новых данных вне меню
+
   def new_station
     puts 'Введите название станции'
     station_name = gets.chomp
@@ -49,9 +102,9 @@ class Controller
     puts 'Введите тип поезда (cargo, passenger)'
     train_type = gets.chomp
     if train_type == 'cargo'
-      @trains_list << CargoTrain.new(train_number)
+      $trains_list << CargoTrain.new(train_number)
     elsif train_type == 'passenger'
-      @trains_list << PassengerTrain.new(train_number)
+      $trains_list << PassengerTrain.new(train_number)
     else
       puts 'Такого типа не существует'
     end
@@ -80,81 +133,49 @@ class Controller
   end
 
   def set_route
-    train_index = choose_train(@trains_list)
+    train_index = choose_train($trains_list)
     route_index = choose_root(@routes)
-    @trains_list[train_index].start_moving(@routes[route_index])
+    $trains_list[train_index].start_moving(@routes[route_index])
   end
 
   def add_carriage_to_train
-    train_index = choose_train(@trains_list)
+    train_index = choose_train($trains_list)
     carriage_type = choose_carriage_type
     new_carr = Carriage.new(carriage_type)
-    @trains_list[train_index].add_carriage(new_carr)
+    $trains_list[train_index].add_carriage(new_carr)
   end
 
   def set_off_carriage
-    train_index = choose_train(@trains_list)
-    @trains_list[train_index].put_away_carriage
+    train_index = choose_train($trains_list)
+    $trains_list[train_index].put_away_carriage
   end
 
   def move_train
-    train_index = choose_train(@trains_list)
+    train_index = choose_train($trains_list)
     puts 'Введите 1 чтобы переместить поезд вперед
     Введите 2 чтобы переместить поезд назад'
     move_choice = gets.to_i
     if move_choice == 1
-      @trains_list[train_index].move_forward(@trains_list[train_index].route)
+      $trains_list[train_index].move_forward($trains_list[train_index].route)
     elsif move_choice == 2
-      @trains_list[train_index].move_backward(@trains_list[train_index].route)
+      $trains_list[train_index].move_backward($trains_list[train_index].route)
     end
   end
 
-  def stations_trains_list
-    puts 'Выберите станцию'
-    chosen_station = choose_station(@stations_list).trains
-    puts chosen_station
-  end
-
-  def menu
-    loop do
-      puts 'Введите 1, чтобы создать станцию
-      Введите 2, чтобы создать поезд
-      Введите 3, чтобы создать маршрут
-      Введите 4, чтобы управлять маршрутом
-      Введите 5, чтобы назначить маршрут
-      Введите 6, чтобы прицепить вагон к поезду
-      Введите 7, чтобы отцепить вагон
-      Введите 8, чтобы переместить поезд по маршруту
-      Введите 9, чтобы просмотреть список станций и вывести список поездов
-      Введите 0, чтобы выйти'
-      choice = gets.to_i
-      case choice
-      when 0
-        break
-      when 1
-        self.new_station
-      when 2
-        self.new_train
-      when 3
-        self.new_route
-      when 4
-        self.control_route
-      when 5
-        self.set_route
-      when 6
-        self.add_carriage_to_train
-      when 7
-        self.set_off_carriage
-      when 8
-        self.move_train
-      when 9
-        self.stations_trains_list
-      else
-        puts "Такой команды нет"
-      end
+  def return_instances
+    puts "1. Train
+    2. Station
+    3. Route"
+    choice_instance = gets.to_i
+    case choice_instance
+    when 1
+      Train.instances_count
+    when 2
+      Station.instances_count
+    when 3
+      Route.instances_count
     end
   end
-
 end
 
 controller = Controller.new
