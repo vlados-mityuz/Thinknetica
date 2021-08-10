@@ -102,9 +102,9 @@ class Controller
     puts 'Введите тип поезда (cargo, passenger)'
     train_type = gets.chomp
     if train_type == 'cargo'
-      $trains_list << CargoTrain.new(train_number)
+      Train.class_variable_get(:@@trains_list) << CargoTrain.new(train_number)
     elsif train_type == 'passenger'
-      $trains_list << PassengerTrain.new(train_number)
+      Train.class_variable_get(:@@trains_list) << PassengerTrain.new(train_number)
     else
       puts 'Такого типа не существует'
     end
@@ -133,32 +133,32 @@ class Controller
   end
 
   def set_route
-    train_index = choose_train($trains_list)
+    train_index = choose_train(Train.class_variable_get(:@@trains_list))
     route_index = choose_root(@routes)
-    $trains_list[train_index].start_moving(@routes[route_index])
+    Train.class_variable_get(:@@trains_list)[train_index].start_moving(@routes[route_index])
   end
 
   def add_carriage_to_train
-    train_index = choose_train($trains_list)
+    train_index = choose_train(Train.class_variable_get(:@@trains_list))
     carriage_type = choose_carriage_type
     new_carr = Carriage.new(carriage_type)
-    $trains_list[train_index].add_carriage(new_carr)
+    Train.class_variable_get(:@@trains_list)[train_index].add_carriage(new_carr)
   end
 
   def set_off_carriage
-    train_index = choose_train($trains_list)
-    $trains_list[train_index].put_away_carriage
+    train_index = choose_train(Train.class_variable_get(:@@trains_list))
+    Train.class_variable_get(:@@trains_list)[train_index].put_away_carriage
   end
 
   def move_train
-    train_index = choose_train($trains_list)
+    train_index = choose_train(Train.class_variable_get(:@@trains_list))
     puts 'Введите 1 чтобы переместить поезд вперед
     Введите 2 чтобы переместить поезд назад'
     move_choice = gets.to_i
     if move_choice == 1
-      $trains_list[train_index].move_forward($trains_list[train_index].route)
+      Train.class_variable_get(:@@trains_list)[train_index].move_forward(Train.class_variable_get(:@@trains_list)[train_index].route)
     elsif move_choice == 2
-      $trains_list[train_index].move_backward($trains_list[train_index].route)
+      Train.class_variable_get(:@@trains_list)[train_index].move_backward(Train.class_variable_get(:@@trains_list)[train_index].route)
     end
   end
 

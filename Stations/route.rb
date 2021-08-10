@@ -9,6 +9,10 @@ class Route
     create_instance
   end
 
+  def self.instances_of_routes
+    self.instances_count
+  end
+
   def add_stop_point(point)
     @stations.insert(-2, point)
   end

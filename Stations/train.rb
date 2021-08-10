@@ -4,8 +4,10 @@ require_relative 'instance_counter.rb'
 class Train
   include Manufacturer
   include InstanceCounter
+  attr_accessor :trains_list
   attr_reader :number, :type, :current_speed, :current_station, :route, :cargo
-  $trains_list = []
+  @@trains_list = []
+
   def initialize (number)
     @number = number
     @current_speed = 0
@@ -15,11 +17,15 @@ class Train
   end
 
   def self.find(searched_number)
-    $trains_list.find { |train| train.number == searched_number }
+    @@trains_list.find { |train| train.number == searched_number }
   end
 
   def increase_speed(value)
     @current_speed += value
+  end
+
+  def self.instances_of_trains
+    self.instances_count
   end
 
   def stop

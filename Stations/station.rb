@@ -14,6 +14,10 @@ class Station
     @trains
   end
 
+  def self.instances_of_stations
+    self.instances_count
+  end
+
   def get_train(train)
     @trains << train
   end

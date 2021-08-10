@@ -7,8 +7,8 @@ module InstanceCounter
   module ClassMethods
     attr_accessor :instances
 
-    def self.instances_count
-      puts @instances
+    def instances_count
+     instances
     end
   end
 
