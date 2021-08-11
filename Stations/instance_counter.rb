@@ -6,9 +6,9 @@ module InstanceCounter
 
   module ClassMethods
     attr_accessor :instances
-
-    def instances_count
-     instances
+    protected
+    def set_instance
+      @instances ||= 0
     end
   end
 

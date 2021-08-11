@@ -54,7 +54,6 @@ class Controller
       Введите 7, чтобы отцепить вагон
       Введите 8, чтобы переместить поезд по маршруту
       Введите 9, чтобы просмотреть список станций и вывести список поездов
-      Введите 10, чтобы вернуть количество инстансов
       Введите 0, чтобы выйти'
       choice = gets.to_i
       case choice
@@ -78,8 +77,6 @@ class Controller
         self.move_train
       when 9
         self.stations_trains_list
-      when 10
-        self.return_instances
       else
         puts "Такой команды нет"
       end
@@ -102,9 +99,9 @@ class Controller
     puts 'Введите тип поезда (cargo, passenger)'
     train_type = gets.chomp
     if train_type == 'cargo'
-      Train.class_variable_get(:@@trains_list) << CargoTrain.new(train_number)
+      CargoTrain.new(train_number)
     elsif train_type == 'passenger'
-      Train.class_variable_get(:@@trains_list) << PassengerTrain.new(train_number)
+      PassengerTrain.new(train_number)
     else
       puts 'Такого типа не существует'
     end
@@ -133,47 +130,32 @@ class Controller
   end
 
   def set_route
-    train_index = choose_train(Train.class_variable_get(:@@trains_list))
+    train_index = choose_train(Train.show_list)
     route_index = choose_root(@routes)
-    Train.class_variable_get(:@@trains_list)[train_index].start_moving(@routes[route_index])
+    Train.show_list[train_index].start_moving(@routes[route_index])
   end
 
   def add_carriage_to_train
-    train_index = choose_train(Train.class_variable_get(:@@trains_list))
+    train_index = choose_train(Train.show_list)
     carriage_type = choose_carriage_type
     new_carr = Carriage.new(carriage_type)
-    Train.class_variable_get(:@@trains_list)[train_index].add_carriage(new_carr)
+    Train.show_list[train_index].add_carriage(new_carr)
   end
 
   def set_off_carriage
-    train_index = choose_train(Train.class_variable_get(:@@trains_list))
-    Train.class_variable_get(:@@trains_list)[train_index].put_away_carriage
+    train_index = choose_train(Train.show_list)
+    Train.show_list[train_index].put_away_carriage
   end
 
   def move_train
-    train_index = choose_train(Train.class_variable_get(:@@trains_list))
+    train_index = choose_train(Train.show_list)
     puts 'Введите 1 чтобы переместить поезд вперед
     Введите 2 чтобы переместить поезд назад'
     move_choice = gets.to_i
     if move_choice == 1
-      Train.class_variable_get(:@@trains_list)[train_index].move_forward(Train.class_variable_get(:@@trains_list)[train_index].route)
+      Train.show_list[train_index].move_forward(Train.show_list[train_index].route)
     elsif move_choice == 2
-      Train.class_variable_get(:@@trains_list)[train_index].move_backward(Train.class_variable_get(:@@trains_list)[train_index].route)
-    end
-  end
-
-  def return_instances
-    puts "1. Train
-    2. Station
-    3. Route"
-    choice_instance = gets.to_i
-    case choice_instance
-    when 1
-      Train.instances_count
-    when 2
-      Station.instances_count
-    when 3
-      Route.instances_count
+      Train.show_list[train_index].move_backward(Train.show_list[train_index].route)
     end
   end
 end

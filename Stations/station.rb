@@ -3,6 +3,7 @@ require_relative 'instance_counter.rb'
 class Station
   include InstanceCounter
   attr_reader :trains, :name
+  set_instance
 
   def initialize(name)
     @name = name
@@ -12,10 +13,6 @@ class Station
 
   def self.all
     @trains
-  end
-
-  def self.instances_of_stations
-    self.instances_count
   end
 
   def get_train(train)

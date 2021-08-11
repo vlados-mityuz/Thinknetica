@@ -7,6 +7,7 @@ class Train
   attr_accessor :trains_list
   attr_reader :number, :type, :current_speed, :current_station, :route, :cargo
   @@trains_list = []
+  set_instance
 
   def initialize (number)
     @number = number
@@ -20,8 +21,16 @@ class Train
     @@trains_list.find { |train| train.number == searched_number }
   end
 
+  def add_train_to_list(train)
+    @@trains_list << train
+  end
+
   def increase_speed(value)
     @current_speed += value
+  end
+
+  def self.show_list
+    @@trains_list
   end
 
   def self.instances_of_trains
@@ -93,6 +102,7 @@ class PassengerTrain < Train
   def initialize(number)
     super
     @type = 'passenger'
+    add_train_to_list(self)
   end
 end
 
@@ -102,5 +112,6 @@ class CargoTrain < Train
   def initialize(number)
     super
     @type = 'cargo'
+    add_train_to_list(self)
   end
 end
