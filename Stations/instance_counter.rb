@@ -5,9 +5,8 @@ module InstanceCounter
   end
 
   module ClassMethods
-    attr_accessor :instances
-    protected
-    def set_instance
+    attr_writer :instances
+    def instances
       @instances ||= 0
     end
   end
@@ -15,7 +14,6 @@ module InstanceCounter
   module InstanceMethods
     protected
     def create_instance
-      self.class.instances ||= 0
       self.class.instances += 1
     end
   end

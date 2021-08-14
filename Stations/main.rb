@@ -91,6 +91,9 @@ class Controller
     puts 'Введите название станции'
     station_name = gets.chomp
     @stations_list << Station.new(station_name)
+  rescue RuntimeError => e
+    puts e.inspect
+    retry
   end
 
   def new_train
@@ -105,6 +108,9 @@ class Controller
     else
       puts 'Такого типа не существует'
     end
+  rescue RuntimeError => e
+    puts e.inspect
+    retry
   end
 
   def new_route
@@ -113,6 +119,9 @@ class Controller
     puts 'Введите конечную точку маршрута'
     second_point = choose_station(@stations_list)
     @routes << Route.new(first_point, second_point)
+  rescue RuntimeError => e
+    puts e.inspect
+    retry
   end
 
   def control_route

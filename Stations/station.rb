@@ -2,13 +2,23 @@ require_relative 'instance_counter.rb'
 
 class Station
   include InstanceCounter
-  attr_reader :trains, :name
-  set_instance
+  attr_accessor :name
+  attr_reader :trains
+
+  NAME_FORMAT = /[a-zа-я]/i
 
   def initialize(name)
-    @name = name
+    @name = name.to_s
+    validate!
     @trains = []
     create_instance
+  end
+
+  def valid?
+    validate!
+    true
+  rescue
+    false
   end
 
   def self.all
@@ -25,5 +35,12 @@ class Station
 
   def train_type(type)
     @trains.select{ |train| type == type }
+  end
+
+  protected
+
+  def validate!
+    raise "Название должно содержать минимум 3 символа" if name.length < 3
+    raise "Название должно содержать только буквы" if name !~ NAME_FORMAT
   end
 end

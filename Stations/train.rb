@@ -7,14 +7,22 @@ class Train
   attr_accessor :trains_list
   attr_reader :number, :type, :current_speed, :current_station, :route, :cargo
   @@trains_list = []
-  set_instance
+  NUMBER_FORMAT = /^\w{3}-?\w{2}/i
 
   def initialize (number)
-    @number = number
+    @number = number.to_s
     @current_speed = 0
     @carriages = []
     @type = type
     create_instance
+    validate!
+  end
+
+  def valid?
+    validate!
+    true
+  rescue
+    false
   end
 
   def self.find(searched_number)
@@ -42,26 +50,14 @@ class Train
   end
 
   def add_carriage(carriage)
-    if carriage.type == @type
-      if current_speed == 0
-        @carriages << carriage
-      else
-        puts "Поезд движется!"
-      end
-    else
-      puts 'Типы не совпадают'
+    if carriage.type == @type && current_speed == 0
+      @carriages << carriage
     end
   end
 
   def put_away_carriage
-    if @carriages.length != 0
-      if current_speed == 0
-        @carriages.pop
-      else
-        puts "Поезд движется!"
-      end
-    else
-      puts 'У поезда нет вагонов!'
+    if @carriages.length != 0 && current_speed == 0
+      @carriages.pop
     end
   end
 
@@ -93,6 +89,12 @@ class Train
 
   def next_station(route)
     route.stations[route.stations.index(@current_station) + 1]
+  end
+
+  protected
+
+  def validate!
+    raise "Номер не соответствует формату" if number !~ NUMBER_FORMAT
   end
 end
 
