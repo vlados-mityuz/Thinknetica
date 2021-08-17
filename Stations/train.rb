@@ -5,9 +5,9 @@ class Train
   include Manufacturer
   include InstanceCounter
   attr_accessor :trains_list
-  attr_reader :number, :type, :current_speed, :current_station, :route, :cargo
+  attr_reader :number, :type, :current_speed, :current_station, :route, :cargo, :carriages
   @@trains_list = []
-  NUMBER_FORMAT = /^\w{3}-?\w{2}/i
+  NUMBER_FORMAT = /^[а-яa-z\d]{3}-?[а-яa-z\d]{2}/i
 
   def initialize (number)
     @number = number.to_s
@@ -89,6 +89,12 @@ class Train
 
   def next_station(route)
     route.stations[route.stations.index(@current_station) + 1]
+  end
+
+  def return_carriage(&block)
+    @carriages.each do |carriage| 
+      block.call(carriage)
+    end
   end
 
   protected

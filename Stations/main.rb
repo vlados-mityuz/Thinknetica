@@ -3,6 +3,7 @@ require_relative 'route.rb'
 require_relative 'station.rb'
 require_relative 'carriage.rb'
 require_relative 'instance_counter.rb'
+require_relative 'manufacturer'
 
 class Controller
   def initialize
@@ -37,10 +38,23 @@ class Controller
     return chosen_station
   end
 
+  def retrun_carriage_list(train)
+    carriage_index = 0
+    train.return_carriage do |carriage|
+      puts "#{carriage_index + 1}: #{carriage.type}, #{carriage.occupied_seats} занято, #{carriage.return_free_seats} свободно" if carriage.type == 'passenger'
+      puts "#{carriage_index + 1}: #{carriage.type}, #{carriage.loaded_capacity} занято, #{carriage.free_capacity} свободно" if carriage.type == 'cargo'
+      carriage_index += 1
+    end
+  end
+
   def stations_trains_list
-    puts 'Выберите станцию'
-    chosen_station = choose_station(@stations_list).trains
-    puts chosen_station
+    @stations_list.each do |station| 
+      puts "#{station.name}:"
+      station.return_trains do |train| 
+        puts "#{train.number} - #{train.type}, #{train.carriages.length}"
+        retrun_carriage_list(train)
+      end
+    end
   end
 
   def menu
@@ -54,6 +68,7 @@ class Controller
       Введите 7, чтобы отцепить вагон
       Введите 8, чтобы переместить поезд по маршруту
       Введите 9, чтобы просмотреть список станций и вывести список поездов
+      Введите 10, чтобы занять место или объем в вагоне
       Введите 0, чтобы выйти'
       choice = gets.to_i
       case choice
@@ -77,6 +92,8 @@ class Controller
         self.move_train
       when 9
         self.stations_trains_list
+      when 10
+        self.load_capacity
       else
         puts "Такой команды нет"
       end
@@ -147,13 +164,33 @@ class Controller
   def add_carriage_to_train
     train_index = choose_train(Train.show_list)
     carriage_type = choose_carriage_type
-    new_carr = Carriage.new(carriage_type)
+    puts 'Укажите вместимость вагона'
+    capacity = gets.to_i
+    if carriage_type == 'cargo'
+      new_carr = CargoCarriage.new(carriage_type, capacity)
+    elsif carriage_type == 'passenger'
+      new_carr = PassengerCarriage.new(carriage_type, capacity)
+    end
     Train.show_list[train_index].add_carriage(new_carr)
   end
 
   def set_off_carriage
     train_index = choose_train(Train.show_list)
     Train.show_list[train_index].put_away_carriage
+  end
+
+  def load_capacity
+    train_index = choose_train(Train.show_list)
+    retrun_carriage_list(Train.show_list[train_index])
+    carriage_index = gets.to_i - 1
+    chosen_carriage = Train.show_list[train_index].carriages[carriage_index]
+    if chosen_carriage.type == 'cargo'
+      puts 'Укажите значение'
+      value_choice = gets.to_i
+      chosen_carriage.load_capacity(value_choice)
+    elsif chosen_carriage.type == 'passenger'
+      chosen_carriage.occupy_seat
+    end
   end
 
   def move_train
