@@ -1,4 +1,4 @@
-require_relative 'instance_counter.rb'
+require_relative 'instance_counter'
 
 class Station
   include InstanceCounter
@@ -17,7 +17,7 @@ class Station
   def valid?
     validate!
     true
-  rescue
+  rescue StandardError
     false
   end
 
@@ -33,12 +33,12 @@ class Station
     @trains.delete(train)
   end
 
-  def train_type(type)
-    @trains.select{ |train| type == type }
+  def train_type(chosen_type)
+    @trains.select { |_train| type == chosen_type }
   end
 
   def return_trains(&block)
-    @trains.each do |train| 
+    @trains.each do |train|
       block.call(train)
     end
   end
@@ -46,7 +46,7 @@ class Station
   protected
 
   def validate!
-    raise "Название должно содержать минимум 3 символа" if name.length < 3
-    raise "Название должно содержать только буквы" if name !~ NAME_FORMAT
+    raise 'Название должно содержать минимум 3 символа' if name.length < 3
+    raise 'Название должно содержать только буквы' if name !~ NAME_FORMAT
   end
 end

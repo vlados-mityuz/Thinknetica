@@ -1,4 +1,4 @@
-require_relative 'manufacturer.rb'
+require_relative 'manufacturer'
 
 class Carriage
   include Manufacturer

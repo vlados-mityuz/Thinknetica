@@ -1,56 +1,56 @@
-require_relative 'train.rb'
-require_relative 'route.rb'
-require_relative 'station.rb'
-require_relative 'carriage.rb'
-require_relative 'instance_counter.rb'
+require_relative 'train'
+require_relative 'route'
+require_relative 'station'
+require_relative 'carriage'
+require_relative 'instance_counter'
 require_relative 'manufacturer'
 
 class Controller
   def initialize
     @stations_list = []
     @routes = []
-  end    
+  end
 
   def choose_train(trains_list)
     puts 'Выберите поезд'
     trains_list.each_with_index { |train, index| puts "#{index + 1}: #{train.number}" }
-    train_index = gets.to_i - 1
-    return train_index
+    gets.to_i - 1
   end
 
   def choose_carriage_type
     puts 'Введите тип вагона (cargo, passenger)'
-    carriage_type = gets.chomp
-    return carriage_type
+    gets.chomp
   end
 
   def choose_root(routes)
     puts 'Выберите маршрут:'
     routes.each_with_index { |route, index| puts "#{index + 1}: #{route.stations}" }
-    route_index = gets.to_i - 1  
-    return route_index
+    gets.to_i - 1
   end
 
   def choose_station(stations_list)
     puts 'Выберите станцию'
     stations_list.each_with_index { |station, index| puts "#{index + 1}: #{station.name}" }
-    chosen_station = stations_list[gets.to_i - 1]
-    return chosen_station
+    stations_list[gets.to_i - 1]
   end
 
   def retrun_carriage_list(train)
     carriage_index = 0
     train.return_carriage do |carriage|
-      puts "#{carriage_index + 1}: #{carriage.type}, #{carriage.occupied_seats} занято, #{carriage.return_free_seats} свободно" if carriage.type == 'passenger'
-      puts "#{carriage_index + 1}: #{carriage.type}, #{carriage.loaded_capacity} занято, #{carriage.free_capacity} свободно" if carriage.type == 'cargo'
+      if carriage.type == 'passenger'
+        puts "#{carriage_index + 1}: #{carriage.type}, #{carriage.occupied_seats} занято, #{carriage.return_free_seats} свободно"
+      end
+      if carriage.type == 'cargo'
+        puts "#{carriage_index + 1}: #{carriage.type}, #{carriage.loaded_capacity} занято, #{carriage.free_capacity} свободно"
+      end
       carriage_index += 1
     end
   end
 
   def stations_trains_list
-    @stations_list.each do |station| 
+    @stations_list.each do |station|
       puts "#{station.name}:"
-      station.return_trains do |train| 
+      station.return_trains do |train|
         puts "#{train.number} - #{train.type}, #{train.carriages.length}"
         retrun_carriage_list(train)
       end
@@ -59,50 +59,42 @@ class Controller
 
   def menu
     loop do
-      puts 'Введите 1, чтобы создать станцию
-      Введите 2, чтобы создать поезд
-      Введите 3, чтобы создать маршрут
-      Введите 4, чтобы управлять маршрутом
-      Введите 5, чтобы назначить маршрут
-      Введите 6, чтобы прицепить вагон к поезду
-      Введите 7, чтобы отцепить вагон
-      Введите 8, чтобы переместить поезд по маршруту
-      Введите 9, чтобы просмотреть список станций и вывести список поездов
-      Введите 10, чтобы занять место или объем в вагоне
-      Введите 0, чтобы выйти'
+      puts "Введите 1, чтобы создать станцию\nВведите 2, чтобы создать поезд\nВведите 3, чтобы создать маршрут\nВведите 4, чтобы управлять маршрутом"
+      puts "Введите 5, чтобы назначить маршрут\nВведите 6, чтобы прицепить вагон к поезду\nВведите 7, чтобы отцепить вагон\nВведите 8, чтобы переместить поезд по маршруту"
+      puts "Введите 9, чтобы просмотреть список станций и вывести список поездов\nВведите 10, чтобы занять место или объем в вагоне\nВведите 0, чтобы выйти"
       choice = gets.to_i
       case choice
       when 0
         break
       when 1
-        self.new_station
+        new_station
       when 2
-        self.new_train
+        new_train
       when 3
-        self.new_route
+        new_route
       when 4
-        self.control_route
+        control_route
       when 5
-        self.set_route
+        set_route
       when 6
-        self.add_carriage_to_train
+        add_carriage_to_train
       when 7
-        self.set_off_carriage
+        set_off_carriage
       when 8
-        self.move_train
+        move_train
       when 9
-        self.stations_trains_list
+        stations_trains_list
       when 10
-        self.load_capacity
+        load_capacity
       else
-        puts "Такой команды нет"
+        puts 'Такой команды нет'
       end
     end
   end
 
   protected
 
-  #ограничение доступа к записи новых данных вне меню
+  # restricting access to writing data outside from menu
 
   def new_station
     puts 'Введите название станции'
@@ -146,10 +138,11 @@ class Controller
     puts 'Введите 1 чтобы добавить станцию
     Введите 2 чтобы убрать станцию'
     choice_root = gets.to_i
-    if choice_root == 1
+    case choice_root
+    when 1
       added_station = Station.new(choose_station(@stations_list).name)
       @routes[route_index].add_stop_point(added_station)
-    elsif choice_root == 2
+    when 2
       deleted_station = choose_station(@stations_list).name
       @routes[route_index].delete_stop_point(deleted_station)
     end
@@ -166,9 +159,10 @@ class Controller
     carriage_type = choose_carriage_type
     puts 'Укажите вместимость вагона'
     capacity = gets.to_i
-    if carriage_type == 'cargo'
+    case capacity
+    when 'cargo'
       new_carr = CargoCarriage.new(carriage_type, capacity)
-    elsif carriage_type == 'passenger'
+    when 'passenger'
       new_carr = PassengerCarriage.new(carriage_type, capacity)
     end
     Train.show_list[train_index].add_carriage(new_carr)
@@ -184,11 +178,12 @@ class Controller
     retrun_carriage_list(Train.show_list[train_index])
     carriage_index = gets.to_i - 1
     chosen_carriage = Train.show_list[train_index].carriages[carriage_index]
-    if chosen_carriage.type == 'cargo'
+    case chosen_carriage.type
+    when 'cargo'
       puts 'Укажите значение'
       value_choice = gets.to_i
       chosen_carriage.load_capacity(value_choice)
-    elsif chosen_carriage.type == 'passenger'
+    when 'passenger'
       chosen_carriage.occupy_seat
     end
   end
@@ -198,9 +193,10 @@ class Controller
     puts 'Введите 1 чтобы переместить поезд вперед
     Введите 2 чтобы переместить поезд назад'
     move_choice = gets.to_i
-    if move_choice == 1
+    case move_choice
+    when move_choice == 1
       Train.show_list[train_index].move_forward(Train.show_list[train_index].route)
-    elsif move_choice == 2
+    when move_choice == 2
       Train.show_list[train_index].move_backward(Train.show_list[train_index].route)
     end
   end

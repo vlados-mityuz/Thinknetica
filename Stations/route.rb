@@ -1,4 +1,4 @@
-require_relative 'instance_counter.rb'
+require_relative 'instance_counter'
 
 class Route
   include InstanceCounter
@@ -16,7 +16,7 @@ class Route
   def valid?
     validate!
     true
-  rescue
+  rescue StandardError
     false
   end
 
@@ -28,16 +28,10 @@ class Route
     @stations.delete(point)
   end
 
-  def valid?
-    validate!
-    true
-  rescue
-    false
-  end
-
   protected
 
   def validate!
-    raise "Нельзя указать одну и ту же станцию в качестве стартовой и конечной точки" if starting_point == finishing_point 
+    return unless starting_point == finishing_point
+      raise 'Нельзя указать одну и ту же станцию в качестве стартовой и конечной точки'
   end
 end

@@ -1,15 +1,16 @@
-require_relative 'manufacturer.rb'
-require_relative 'instance_counter.rb'
+require_relative 'manufacturer'
+require_relative 'instance_counter'
 
 class Train
   include Manufacturer
   include InstanceCounter
   attr_accessor :trains_list
   attr_reader :number, :type, :current_speed, :current_station, :route, :cargo, :carriages
+
   @@trains_list = []
   NUMBER_FORMAT = /^[а-яa-z\d]{3}-?[а-яa-z\d]{2}/i
 
-  def initialize (number)
+  def initialize(number)
     @number = number.to_s
     @current_speed = 0
     @carriages = []
@@ -21,7 +22,7 @@ class Train
   def valid?
     validate!
     true
-  rescue
+  rescue StandardError
     false
   end
 
@@ -42,7 +43,7 @@ class Train
   end
 
   def self.instances_of_trains
-    self.instances_count
+    instances_count
   end
 
   def stop
@@ -50,15 +51,11 @@ class Train
   end
 
   def add_carriage(carriage)
-    if carriage.type == @type && current_speed == 0
-      @carriages << carriage
-    end
+    @carriages << carriage if current_speed.zero?
   end
 
   def put_away_carriage
-    if @carriages.length != 0 && current_speed == 0
-      @carriages.pop
-    end
+    @carriages.pop if !@carriages.empty? && current_speed.zero?
   end
 
   def start_moving(route)
@@ -92,7 +89,7 @@ class Train
   end
 
   def return_carriage(&block)
-    @carriages.each do |carriage| 
+    @carriages.each do |carriage|
       block.call(carriage)
     end
   end
@@ -100,7 +97,7 @@ class Train
   protected
 
   def validate!
-    raise "Номер не соответствует формату" if number !~ NUMBER_FORMAT
+    raise 'Номер не соответствует формату' if number !~ NUMBER_FORMAT
   end
 end
 
