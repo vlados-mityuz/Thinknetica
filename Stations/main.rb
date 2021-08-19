@@ -5,6 +5,7 @@ require_relative 'carriage'
 require_relative 'instance_counter'
 require_relative 'manufacturer'
 
+# rubocop:disable Metrics/ClassLength
 class Controller
   def initialize
     @stations_list = []
@@ -34,6 +35,7 @@ class Controller
     stations_list[gets.to_i - 1]
   end
 
+  # rubocop:disable Layout/LineLength
   def retrun_carriage_list(train)
     carriage_index = 0
     train.return_carriage do |carriage|
@@ -46,6 +48,7 @@ class Controller
       carriage_index += 1
     end
   end
+  # rubocop:enable Layout/LineLength
 
   def stations_trains_list
     @stations_list.each do |station|
@@ -57,11 +60,14 @@ class Controller
     end
   end
 
+  # rubocop:disable Metrics/AbcSize, Metrics/CyclomaticComplexity, Metrics/BlockLength
   def menu
     loop do
+      # rubocop:disable Layout/LineLength
       puts "Введите 1, чтобы создать станцию\nВведите 2, чтобы создать поезд\nВведите 3, чтобы создать маршрут\nВведите 4, чтобы управлять маршрутом"
       puts "Введите 5, чтобы назначить маршрут\nВведите 6, чтобы прицепить вагон к поезду\nВведите 7, чтобы отцепить вагон\nВведите 8, чтобы переместить поезд по маршруту"
       puts "Введите 9, чтобы просмотреть список станций и вывести список поездов\nВведите 10, чтобы занять место или объем в вагоне\nВведите 0, чтобы выйти"
+      # rubocop:enable Layout/LineLength
       choice = gets.to_i
       case choice
       when 0
@@ -91,6 +97,7 @@ class Controller
       end
     end
   end
+  # rubocop:enable Metrics/AbcSize, Metrics/CyclomaticComplexity, Metrics/BlockLength
 
   protected
 
@@ -110,9 +117,10 @@ class Controller
     train_number = gets.to_i
     puts 'Введите тип поезда (cargo, passenger)'
     train_type = gets.chomp
-    if train_type == 'cargo'
+    case train_type
+    when 'cargo'
       CargoTrain.new(train_number)
-    elsif train_type == 'passenger'
+    when 'passenger'
       PassengerTrain.new(train_number)
     else
       puts 'Такого типа не существует'
@@ -173,6 +181,7 @@ class Controller
     Train.show_list[train_index].put_away_carriage
   end
 
+  # rubocop:disable Metrics/AbcSize
   def load_capacity
     train_index = choose_train(Train.show_list)
     retrun_carriage_list(Train.show_list[train_index])
@@ -201,6 +210,7 @@ class Controller
     end
   end
 end
+# rubocop:enable Metrics/ClassLength, Metrics/AbcSize
 
 controller = Controller.new
 controller.menu

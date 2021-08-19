@@ -32,6 +32,7 @@ class Route
 
   def validate!
     return unless starting_point == finishing_point
-      raise 'Нельзя указать одну и ту же станцию в качестве стартовой и конечной точки'
+
+    raise 'Нельзя указать одну и ту же станцию в качестве стартовой и конечной точки'
   end
 end

@@ -7,7 +7,9 @@ class Train
   attr_accessor :trains_list
   attr_reader :number, :type, :current_speed, :current_station, :route, :cargo, :carriages
 
+  # rubocop:disable Style/ClassVars
   @@trains_list = []
+  # rubocop:enable Style/ClassVars
   NUMBER_FORMAT = /^[а-яa-z\d]{3}-?[а-яa-z\d]{2}/i
 
   def initialize(number)
