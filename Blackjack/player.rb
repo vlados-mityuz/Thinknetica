@@ -5,11 +5,14 @@ class Player
   attr_reader :balane, :card_counter
 
   def initialize
+    @total_count = 0
     @players_hand = []
     @balance = 100
     create_cards
-    @players_hand << give_card
-    @players_hand << give_card
+    add_card_to_hand
+    add_card_to_hand
+    point_count
+    puts "Карты: #{@players_hand}, очки: #{@total_count}"
   end
 
 end
