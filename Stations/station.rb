@@ -1,24 +1,21 @@
-require_relative 'instance_counter'
-
 class Station
   include InstanceCounter
+  include Accessors
+  include Validation
   attr_accessor :name
   attr_reader :trains
 
   NAME_FORMAT = /[a-zа-я]/i
+
+  validate :name, :presence
+  validate :name, :format, NAME_FORMAT
+  validate :attribute_class, :type, "Station"
 
   def initialize(name)
     @name = name.to_s
     validate!
     @trains = []
     create_instance
-  end
-
-  def valid?
-    validate!
-    true
-  rescue StandardError
-    false
   end
 
   def self.all
@@ -41,12 +38,5 @@ class Station
     @trains.each do |train|
       block.call(train)
     end
-  end
-
-  protected
-
-  def validate!
-    raise 'Название должно содержать минимум 3 символа' if name.length < 3
-    raise 'Название должно содержать только буквы' if name !~ NAME_FORMAT
   end
 end

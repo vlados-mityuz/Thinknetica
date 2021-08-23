@@ -1,9 +1,13 @@
 require_relative 'manufacturer'
 require_relative 'instance_counter'
+require_relative 'validation.rb'
+require_relative 'accessors.rb'
 
 class Train
   include Manufacturer
   include InstanceCounter
+  include Accessors
+  include Validation
   attr_accessor :trains_list
   attr_reader :number, :type, :current_speed, :current_station, :route, :cargo, :carriages
 
@@ -11,6 +15,10 @@ class Train
   @@trains_list = []
   # rubocop:enable Style/ClassVars
   NUMBER_FORMAT = /^[а-яa-z\d]{3}-?[а-яa-z\d]{2}/i
+
+  validate :number, :presence
+  validate :number, :format, NUMBER_FORMAT
+  validate :attribute_class, :type, "Train"
 
   def initialize(number)
     @number = number.to_s
@@ -98,9 +106,9 @@ class Train
 
   protected
 
-  def validate!
-    raise 'Номер не соответствует формату' if number !~ NUMBER_FORMAT
-  end
+  # def validate!
+  #   raise 'Номер не соответствует формату' if number !~ NUMBER_FORMAT
+  # end
 end
 
 class PassengerTrain < Train
