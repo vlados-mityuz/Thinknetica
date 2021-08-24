@@ -1,18 +1,14 @@
 module Hand
   def self.included(base)
-    base.extend ClassMethods
     base.send :include, InstanceMethods
   end
 
-  module ClassMethods
-  end
-
   module InstanceMethods
-    attr_reader :all_cards
-    attr_accessor :total_count, :players_hand
+    attr_reader :all_cards, :total_count, :players_hand
+
     @@all_cards = []
-    @@dealer_balance = 100
-    @@player_balance = 100
+
+    private
 
     def create_cards
       @values = ['A', 'K', 'Q', 'J', 10, 9, 8, 7, 6, 5, 4, 3, 2]
@@ -25,19 +21,21 @@ module Hand
     end
 
     def point_count
+      @total_count = 0
       @players_hand.each do |card|
-        if card[0...-1] == 'A'
-          if @total_count <= 10
-            @total_count += 11
-          else
-            @total_count += 1
-          end
-        elsif card[0...-1] == 'K' || card[0...-1] == 'Q' || card[0...-1] == 'J'
-          @total_count += 10
-        else
-          @total_count += (card[0...-1]).to_i
-        end
-      end          
+        @total_count += case card[0...-1]
+                        when 'A'
+                          if @total_count <= 10
+                            11
+                          else
+                            1
+                          end
+                        when 'K', 'Q', 'J'
+                          10
+                        else
+                          (card[0...-1]).to_i
+                        end
+      end
     end
 
     def add_card_to_hand

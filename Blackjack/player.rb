@@ -1,4 +1,4 @@
-require_relative 'hand.rb'
+require_relative 'hand'
 
 class Player
   include Hand
@@ -10,11 +10,10 @@ class Player
     add_card_to_hand
     add_card_to_hand
     point_count
-    puts "Карты: #{@players_hand}, очки: #{@total_count}"
   end
 
   def add_card
     add_card_to_hand
-    puts "Карты: #{@players_hand}, очки: #{@total_count}"
+    point_count
   end
 end
