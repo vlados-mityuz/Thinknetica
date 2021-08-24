@@ -11,6 +11,8 @@ module Hand
     attr_reader :all_cards
     attr_accessor :total_count, :players_hand
     @@all_cards = []
+    @@dealer_balance = 100
+    @@player_balance = 100
 
     def create_cards
       @values = ['A', 'K', 'Q', 'J', 10, 9, 8, 7, 6, 5, 4, 3, 2]
@@ -22,15 +24,8 @@ module Hand
       end
     end
 
-    def give_card
-      chosen_card = @@all_cards[rand(@@all_cards.length)]
-      @@all_cards.delete(chosen_card)
-      return chosen_card
-    end
-
     def point_count
       @players_hand.each do |card|
-        puts card[0...-1]
         if card[0...-1] == 'A'
           if @total_count <= 10
             @total_count += 11
@@ -46,7 +41,9 @@ module Hand
     end
 
     def add_card_to_hand
-      @players_hand << give_card
+      chosen_card = @@all_cards[rand(@@all_cards.length)]
+      @@all_cards.delete(chosen_card)
+      @players_hand << chosen_card
     end
   end
 end
