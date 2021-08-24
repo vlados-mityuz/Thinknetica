@@ -1,21 +1,13 @@
-require_relative 'hand'
 require_relative 'player'
+require_relative 'deck'
+require_relative 'card'
+require_relative 'hand'
 
 class Controller
-  include Hand
-
-  def dealers_turn
-    @dealer.add_card if @dealer.total_count < 17 && @dealer.players_hand.length < 3
-  end
-
   def turns
     loop do
-      puts "Ваши карты: #{@player.players_hand}, очки: #{@player.total_count}"
-      print "Карты дилера:"
-      puts "*" * @dealer.players_hand.length
-      puts "Выберите ход:\n1. Пропустить\n2. Добавить карту\n3. Открыть карты"
-      choice = gets.to_i
-      case choice
+      turns_interface
+      case @choice
       when 1
         dealers_turn
       when 2
@@ -28,7 +20,18 @@ class Controller
       end
       break if @player.players_hand.length == 3
     end
-    puts 'Подсчет очков'
+  end
+
+  def turns_interface
+    puts "Ваши карты: #{@player.players_hand}, очки: #{@player.total_count}"
+    print "Карты дилера:"
+    puts "*" * @dealer.players_hand.length
+    puts "Выберите ход:\n1. Пропустить\n2. Добавить карту\n3. Открыть карты"
+    @choice = gets.to_i
+  end
+
+  def dealers_turn
+    @dealer.add_card if @dealer.total_count < 17 && @dealer.players_hand.length < 3
   end
 
   def winner_count
@@ -36,55 +39,64 @@ class Controller
     puts "Карты дилера: #{@dealer.players_hand}, очки: #{@dealer.total_count}"
     if @player.total_count == @dealer.total_count
       puts 'Ничья'
-      @dealer_balance += 10
-      @player_balance += 10
+      @dealer_balance.draw
+      @player_balance.draw
     elsif @player.total_count > 21
       puts 'Дилер выиграл'
-      @dealer_balance += 20
+      @dealer_balance.win
     elsif @dealer.total_count > 21
       puts "#{@player_name} выиграл"
-      @player_balance += 20
+      @player_balance.win
     elsif @player.total_count == 21
       puts "#{@player_name} выиграл"
-      @player_balance += 20
+      @player_balance.win
     elsif @player.total_count > @dealer.total_count
       puts "#{@player_name} выиграл"
-      @player_balance += 20
+      @player_balance.win
     elsif @player.total_count < @dealer.total_count
       puts 'Дилер выиграл'
-      @dealer_balance += 20
+      @dealer_balance.win
     end
-    puts "Баланс #{@player_name}: #{@player_balance}\nБаланс дилера: #{@dealer_balance}"
+    puts "Баланс #{@player_name}: #{@player_balance.balance}\nБаланс дилера: #{@dealer_balance.balance}"
   end
 
-  def menu
-    @dealer_balance = 100
-    @player_balance = 100
+  def game
+    deck = Deck.new
+    @dealer_balance = Player.new(deck)
+    @player_balance = Player.new(deck)
     loop do
-      create_cards
-      @dealer_balance -= 10
-      @player_balance -= 10
-      @player = Player.new
-      @dealer = Player.new
+      deck = Deck.new
+      @player_balance.balance -= 10
+      @dealer_balance.balance -= 10
+      @player = Hand.new(deck)
+      @dealer = Hand.new(deck)
       turns
       winner_count
-      if @dealer_balance.zero?
+      if @dealer_balance.balance.zero?
         puts 'Игрок победил'
         break
-      elsif @player_balance.zero?
+      elsif @player_balance.balance.zero?
         puts 'Дилер победил'
         break
       end
     end
   end
+
+  def menu
+    get_name
+    loop do
+      game
+      puts 'Хотите продолжить? Введите, 1 если да'
+      continue = gets.to_i
+      break if continue != 1
+    end
+  end
+
+  def get_name
+    puts 'Введите ваше имя:'
+    @player_name = gets.chomp
+  end
 end
 
-puts 'Введите ваше имя:'
-@player_name = gets.chomp
 controller = Controller.new
-loop do
-  controller.menu
-  puts 'Хотите продолжить? Введите, 1 если да'
-  continue = gets.to_i
-  break if continue != 1
-end
+controller.menu

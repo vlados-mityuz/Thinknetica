@@ -1,19 +1,17 @@
-require_relative 'hand'
+require_relative 'deck.rb'
 
 class Player
-  include Hand
-  attr_reader :card_counter
+  attr_accessor :balance
 
-  def initialize
-    @total_count = 0
-    @players_hand = []
-    add_card_to_hand
-    add_card_to_hand
-    point_count
+  def initialize(deck)
+    @balance = 100
+  end
+ 
+  def win
+    @balance += 20
   end
 
-  def add_card
-    add_card_to_hand
-    point_count
-  end
+  def draw
+    @balance += 10
+  end  
 end
