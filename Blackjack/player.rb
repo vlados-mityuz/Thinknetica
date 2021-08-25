@@ -3,7 +3,7 @@ require_relative 'deck.rb'
 class Player
   attr_accessor :balance
 
-  def initialize(deck)
+  def initialize
     @balance = 100
   end
  

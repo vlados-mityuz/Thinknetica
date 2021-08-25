@@ -1,23 +1,21 @@
 class Hand
-  attr_reader :total_count, :players_hand
+  attr_reader :total_count, :players_hand, :hand_for_show
 
-  def initialize(deck)
-    @deck = deck
-    @total_count = 0
+  def initialize
     @players_hand = []
-    add_card
-    add_card
-    point_count
+    @hand_for_show = []
   end
 
-  def add_card
-    @deck.add_card_to_hand(@players_hand)
+  def add_card(deck)
+    deck.add_card_to_hand(@players_hand, @hand_for_show)
+    point_count
   end
 
   def point_count
     @total_count = 0
     @players_hand.each do |card|
-      @total_count += case card[0...-1]
+      value = card.value
+      @total_count += case value
                       when 'A'
                         if @total_count <= 10
                           11
@@ -27,7 +25,7 @@ class Hand
                       when 'K', 'Q', 'J'
                         10
                       else
-                        (card[0...-1]).to_i
+                        value.to_i
                       end
     end
   end
