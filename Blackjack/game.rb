@@ -72,7 +72,7 @@ class Game
 
   def winner_count
     @interface.player_cards(@player)
-    @interface.dealer_cards(@player)
+    @interface.dealer_cards(@dealer)
     if @player.total_count == @dealer.total_count
       @interface.draw
       @dealer_balance.draw
